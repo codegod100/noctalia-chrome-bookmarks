@@ -1,0 +1,21 @@
+{
+  "id": "chrome-bookmarks",
+  "name": "Chrome Bookmarks",
+  "version": "1.0.1",
+  "author": "Your Name",
+  "description": "Search and open Chrome bookmarks in a new browser window",
+  "minNoctaliaVersion": "3.9.0",
+  "entryPoints": {
+    "launcherProvider": "LauncherProvider.qml",
+    "panel": "Panel.qml",
+    "main": "Main.qml"
+  },
+  "metadata": {
+    "commandPrefix": "bm"
+  },
+  "defaultSettings": {
+    "bookmarksPath": "/home/nandi/.config/chrome-noctalia/Default/Bookmarks",
+    "browserCommand": "xdg-open",
+    "maxResults": 50
+  }
+}

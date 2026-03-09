@@ -1,0 +1,18 @@
+{
+  "id": "quick-notes",
+  "name": "Quick Notes",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "description": "Quickly save and search short notes from the launcher",
+  "minNoctaliaVersion": "3.9.0",
+  "entryPoints": {
+    "launcherProvider": "LauncherProvider.qml",
+    "main": "Main.qml"
+  },
+  "metadata": {
+    "commandPrefix": "note"
+  },
+  "defaultSettings": {
+    "maxNotes": 50
+  }
+}
