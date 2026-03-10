@@ -1,0 +1,25 @@
+{
+  "id": "clock-plugin",
+  "name": "Big Clock",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "3.6.0",
+  "author": "Your Name",
+  "license": "MIT",
+  "description": "A highly readable clock for your bar",
+  "tags": ["Bar", "Utility"],
+  "entryPoints": {
+    "main": "Main.qml",
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+      "use12Hour": true,
+      "showSeconds": false,
+      "fontSize": 24
+    }
+  }
+}
