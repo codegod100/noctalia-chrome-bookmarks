@@ -1,13 +1,16 @@
 {
-  "id": "chrome-bookmarks",
-  "name": "Chrome Bookmarks",
+  "id": "chrome-bookmarks-launcher",
+  "name": "Chrome Bookmarks Launcher",
   "version": "1.0.1",
   "author": "Your Name",
-  "description": "Browse Chrome bookmarks and tabs in a detachable panel",
+  "description": "Search and open Chrome bookmarks from the Noctalia launcher",
   "minNoctaliaVersion": "3.9.0",
   "entryPoints": {
-    "panel": "Panel.qml",
+    "launcherProvider": "LauncherProvider.qml",
     "main": "Main.qml"
+  },
+  "metadata": {
+    "commandPrefix": "bm"
   },
   "defaultSettings": {
     "bookmarksPath": "/home/nandi/.config/chrome-noctalia/Default/Bookmarks",

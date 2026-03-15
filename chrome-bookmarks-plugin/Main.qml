@@ -6,19 +6,16 @@ Item {
     id: root
     property var pluginApi: null
     
-    // IPC Handler - allows keyboard shortcuts and external commands
     IpcHandler {
         target: "plugin:chrome-bookmarks"
         
-        // Toggle launcher with our command prefix
         function toggle() {
             if (!pluginApi) return
             pluginApi.withCurrentScreen(function(screen) {
-                pluginApi.toggleLauncher(screen)
+                pluginApi.togglePanel(screen)
             })
         }
         
-        // Toggle the panel view
         function togglePanel() {
             if (!pluginApi) return
             pluginApi.withCurrentScreen(function(screen) {

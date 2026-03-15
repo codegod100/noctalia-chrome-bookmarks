@@ -10,7 +10,7 @@ Item {
     
     property var pluginApi: null
     property ShellScreen screen
-    readonly property var geometryPlaceholder: panelContainer
+    readonly property var geometryPlaceholder: panelGeometry
     
     // Safety helper
     function getSafe(obj, prop, fallback) {
@@ -34,19 +34,26 @@ Item {
     property string tabSearch: ""
     property bool bookmarksLoaded: false
     property bool tabsLoaded: false
+    readonly property string tabsSnapshotPath: "/tmp/thorium-tabs.json"
     
     // Settings
     property string bookmarksPath: ""
     property string browserCommand: "xdg-open"
     property int maxResults: 50
     
+    Item {
+        id: panelGeometry
+        anchors.fill: parent
+    }
+
     Rectangle {
         id: panelContainer
         anchors.fill: parent
-        color: getSafe(Color, "mSurface", "#1a1a1a")
+        anchors.topMargin: 1
+        color: "transparent"
         radius: getSafe(Style, "radiusL", 8)
-        border.width: 1
-        border.color: getSafe(Color, "mOutlineVariant", "#444444")
+        clip: true
+        antialiasing: true
         
         RowLayout {
             anchors.fill: parent
@@ -179,9 +186,6 @@ Item {
                         id: tabsListView
                         anchors.fill: parent
                         model: tabsLoaded ? tabs.filter(function(t) {
-                            if (t.type !== "page") return false;
-                            
-                            // EXCLUDE tabs with "omnibox" in title or URL
                             var title = (t.title || "").toLowerCase();
                             var url = (t.url || "").toLowerCase();
                             if (title.indexOf("omnibox") !== -1 || url.indexOf("omnibox") !== -1) {
@@ -342,20 +346,32 @@ Item {
         }
     }
     
-    Process {
-        id: tabsProcess
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    tabs = JSON.parse(this.text)
-                    tabsLoaded = true
-                } catch (e) {}
-            }
+    FileView {
+        id: tabsFile
+        path: tabsSnapshotPath
+        watchChanges: true
+        onLoaded: parseTabs(text())
+        onLoadFailed: {
+            tabs = []
+            tabsLoaded = false
         }
     }
     
     function loadTabs() {
-        tabsProcess.exec(["curl", "-s", "http://localhost:9222/json"])
+        tabsFile.path = tabsSnapshotPath
+    }
+
+    function parseTabs(jsonText) {
+        try {
+            if (!jsonText) return
+            var data = JSON.parse(jsonText)
+            tabs = data.tabs || []
+            tabsLoaded = true
+        } catch (e) {
+            Logger.e("Bookmarks", "Panel failed to parse tabs: " + e)
+            tabs = []
+            tabsLoaded = false
+        }
     }
     
     function extractDomain(url) {
@@ -375,12 +391,12 @@ Item {
     
     function openTab(tab) {
         if (tab && tab.id) {
-            Logger.i("Bookmarks", "Activating tab: " + tab.id)
-            Quickshell.execDetached(["curl", "-s", "http://localhost:9222/json/activate/" + tab.id])
+            Logger.i("Bookmarks", "Requesting focus for tab: " + tab.id)
+            var scriptPath = pluginApi.pluginDir + "/focus-tab.js"
+            Quickshell.execDetached(["node", scriptPath, String(tab.id), String(tab.windowId || "")])
         } else if (tab && tab.url) {
-            Logger.i("Bookmarks", "Opening tab in new window via CDP: " + tab.url)
-            var scriptPath = pluginApi.pluginDir + "/open-cdp.js"
-            Quickshell.execDetached(["node", scriptPath, tab.url, "true"])
+            Logger.i("Bookmarks", "Falling back to opening tab URL: " + tab.url)
+            Quickshell.execDetached([browserCommand, tab.url])
         }
         
         if (pluginApi) pluginApi.closePanel(pluginApi.panelOpenScreen)

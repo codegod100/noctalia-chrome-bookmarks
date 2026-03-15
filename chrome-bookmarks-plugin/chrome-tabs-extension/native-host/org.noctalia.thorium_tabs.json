@@ -1,0 +1,9 @@
+{
+  "name": "org.noctalia.thorium_tabs",
+  "description": "Native messaging host for Thorium tab snapshots",
+  "path": "__HOST_PATH__",
+  "type": "stdio",
+  "allowed_origins": [
+    "__EXTENSION_ORIGIN__"
+  ]
+}
